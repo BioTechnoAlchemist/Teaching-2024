@@ -177,26 +177,25 @@ We will go through examples for both functions.
 
 # First qplot()
 
-# On the first row we determine that we are using the dataset suhteet (relationships) and the variables PARISUHDE (intimate relationship) and SEKS_AKTIIVISUUS (sexual activity). geom="bar" determines that we want a dot plot.
-# On the second row we define parameters for how the dots appear in the plot.
-# On the third row we determine the headings.
-# The theme_light() determines that we are using a light theme.
+# On the first row we determine that we are using the dataset suhteet (relationships) and the variable PARISUHDE (intimate relationship). geom="bar" determines that we want a bar plot.
+# On the second row we determine the headings and the fill=PARISUHDE determines that the color filling is done based on this variable.
+# The theme_light() determines that we are using a light theme. The scale_fill_brewer is used to determine the coloring. There are loads of different scale_fills, just type scale_fill, press tab and have a look, but make sure that the palette is suitable for your data type (e.g. continuous vs. categorical).
+# The last line determines the angle for the x-axis labels, angle defines the angle of the text and hjust controls horizontal justification of the text in relation to the plot. Without it the texts will overlap (you can try how it will look). legen.position = "none" will remove the legend which would be redundant in this visualization.
 
-plot3 <- qplot(data=suhteet, PARISUHDE, SEKS_AKTIIVISUUS, geom="dotplot", 
-            stackdir = "center", binaxis = "y", binwidth=0.075, 
-            xlab="Parisuhteen tyyppi", ylab="Seksuaalinen aktiivisuus") + # Define names for the x and y axis.
-  theme_light()
+plot1 <- qplot(data=suhteet, PARISUHDE, geom="bar", 
+            xlab="Parisuhde", ylab="Lukumäärä", fill=PARISUHDE) + 
+  theme_light() + scale_fill_brewer(palette = "Accent") + 
+  theme(axis.text.x=element_text(angle=45, hjust=1),
+        legend.position = "none") 
 
-# Again on the first row we define the data and variables, as well as the plot type (violin) and fill=PARISUHDE determines that the color filling is done based on this variable.
-# scale_fill_discrete() is used to determine the coloring. In this case it's a discrete palette which is suitable for discerete variables. There are loads of different scale_fills, just type scale_fill, press tab and have a look.
-# The last line determines the angle for the x-axis labels. angle defines the angle of the text and hjust controls horizontal justification of the text in relation to the plot. Without it the texts will overlap (you can try how it will look). legen.position = "none" will remove the legend which would be redundant in this visualization.
+# The next plot follows the same logic with some small changes.
 
-plot4 <- qplot(data=suhteet, PARISUHDE, SEKS_AKTIIVISUUS, geom="violin", fill=PARISUHDE, 
-            xlab="Parisuhteen tyyppi", ylab="Seksuaalinen aktiivisuus") + 
-  theme_light() + scale_fill_discrete() + 
-  theme(axis.text.x=element_text(angle=45, hjust=1), legend.position = "none")
+plot2 <- qplot(data=suhteet, PARISUHDE, geom="bar", 
+            xlab="Parisuhde", ylab="Lukumäärä", fill=SUKUP) + 
+  theme_light() + scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  theme(axis.text.x=element_text(angle=45, hjust=1))  
 
-grid.arrange(plot3, plot4, ncol=2) # This function comes from the package gridExtra. It does something similar that the par() did in the example above, but this need to be used after creating/assigning the images and then the plot names are called here. ncol=2 determines the number of columns. The plots won't appear before this function is used!
+grid.arrange(plot1, plot2, ncol=2) # This function comes from the package gridExtra. It does something similar that the par() did in the example above, but this need to be used after creating/assigning the images and then the plot names are called here. ncol=2 determines the number of columns. The plots won't appear before this function is used!
 
 
 ```
