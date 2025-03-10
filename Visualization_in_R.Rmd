@@ -16,16 +16,15 @@ output:
 
 This document is part of an obligatory R course at the University of Turku (BIOL3050 Bioinformatics to Biologists). The materials have been created by the teacher Dr. Lea Mikkola and they have been updated in February 2024. The teaching materials and data are partly based on the Finnish book "Statistics handbook" By Prof. Lauri Nummenmaa. EAN: 9789520401382.
 
-### General remarks about piping and grouping  
+### General remarks about piping and grouping
 
-**Piping** can be used to create efficient workflows where you can use many functions in one go. Just by piping you can create workflows that are quick to run and relatively easy to read. However, it's also important to remember that piping is not a good solution for all situations. 
+**Piping** can be used to create efficient workflows where you can use many functions in one go. Just by piping you can create workflows that are quick to run and relatively easy to read. However, it's also important to remember that piping is not a good solution for all situations.
 
 For example, when you are just starting with a new data, you might want to proceed one function at a time to learn how your data looks. So, before using pipes, do consider if they are actually good for that situation or would it be useful to see the output for the different functions.
 
 **Grouping** makes it possible to analyse/process multiple groups within your data at the same time. So, for example, if you have a group in your data such as the sex, with grouping you could simultaneously calculate specific summary statistics for both sexes.
 
-
-```{r, message = FALSE}
+```{r, message=FALSE}
 #Activate the libraries needed for this lecture: tidyverse, gridExtra and nummenmaa.
 library(tidyverse)
 library(gridExtra)
@@ -33,7 +32,7 @@ library(nummenmaa)
 
 ```
 
-By defining **{r, results = FALSE}**  in the first row of the code chunk, you can stop Markdown from printing the results into your output document when knitting. For short outputs (a couple of rows) this is not an issue.
+By defining **{r, results = FALSE}** in the first row of the code chunk, you can stop Markdown from printing the results into your output document when knitting. For short outputs (a couple of rows) this is not an issue.
 
 ```{r, results = FALSE}
 
@@ -71,16 +70,28 @@ ciri %>%
 
 ```{r, results=FALSE}
 
-# We can also do this another way by using the function summarise_all(). Then you need to define the statistical functions (mean, median, sd etc.) within another function called list().
+# We can also do this another way by using the function summarise_all(). Then you need to define the statistical functions (mean, median, sd etc.) within another function called list(). This function has been updated recently and although it still works, the summarise _if, _at, and _all verbs have been superceded by across and pick. Below you'll see the same tasks done with the old summarise_all and across.
 
 ciri %>%
   group_by(SUKUP) %>%
   select(SUKUP, CERAD, KOLESTEROLI, HDL, LDL, KOULUTUSV, IKA, BMI) %>% 
   summarise_all(list(mean = mean, median = median))
 
-# Note that this function is quite specific in what kind of data it can input, because it tries to calculate these statistics across all variables and for some variables it's not possible (because they are not numeric). Here I went around this issue by selecting only the columns from which it can calculate these statistics. 
+
+# Note that the summarise functions are quite specific in what kind of data it can input, because it tries to calculate these statistics across all variables and for some variables it's not possible (because they are not numeric). Here I went around this issue by selecting only the columns from which it can calculate these statistics. This applies to the next example with across as well.
 #In the list() function I use list(mean = mean, median = median) just for naming the new variables meaningfully. If I would just use list(mean, median) that would work too, but then the names of the new variables would be harder to interpret (they would look like variable_fn1 instead of variable_mean). You can try both options.
 
+
+```
+
+Using across..
+
+```{r}
+
+ciri %>%
+  group_by(SUKUP) %>%
+  select(SUKUP, CERAD, KOLESTEROLI, HDL, LDL, KOULUTUSV, IKA, BMI) %>% 
+  summarise(across(everything(), list(min = min, max = max)))
 
 ```
 
@@ -91,7 +102,7 @@ ciri %>%
 aggressio %>%
   group_by(KAUPUNKI) %>%
   select(KAUPUNKI, IKA, ITSE_EMPATIA, TOV_EMPATIA, ITSE_SOSALY, TOV_SOSALY, ITSE_FYYSINEN, TOV_FYYSINEN, ITSE_VERBAALINEN, TOV_VERBAALINEN) %>% 
-  summarise_all(list(mean = mean))
+  summarise(across(everything(), list(mean = mean)))
 
 ```
 
@@ -101,7 +112,7 @@ aggressio %>%
 suhteet %>%
   group_by(SUKUP) %>%
   select(IKA, ULKONAKO, PUOLEENSAVETAVYYS, LIIKUNTAMAARA, INTOHIMO, KIINN_OMASUPU, KIINN_VASTSUPU, SEKS_AKTIIVISUUS) %>%  
-  summarise_all(list(min = min, max = max, mean = mean))
+  summarise(across(everything(), list(min = min, max = max, mean = mean)))
 
 # Note that the output arrangement is based on the functions, which might not be the best way to output data with multiple variables. If you use the function summarise() instead, it will print the outputs in the order you wrote the code, but the code will be several rows as each calculation needs to be stated separately. This is a typical example where you might want to think of what's more important, the clarity of the output or the clarity of the code. There's no one correct answer and it usually depends on the situation and who's reading the output vs who's using the code. Just something for you to think about!
 
@@ -109,13 +120,11 @@ suhteet %>%
 
 ## Visualization
 
-Visualizing your data clearly is one of the most important things to learn in R. It is important both in the beginning when you are first inspecting your data and when you are analyzing it and looking at the results. Numbers in statistics are one thing but visualizations can tell us a lot in one glance! 
+Visualizing your data clearly is one of the most important things to learn in R. It is important both in the beginning when you are first inspecting your data and when you are analyzing it and looking at the results. Numbers in statistics are one thing but visualizations can tell us a lot in one glance!
 
 However, it's important to also remember that visualizations can be misleading if used incorrectly. The world is full of misleading and poorly made visualizations of different statistics, so please pay attention when creating them yourself but also when looking at other people's creations.
 
-If you want to go a bit further into the topic of visualization, you can read chapter 8. in the Tilastotieteen käsikirja (p. 147-172, in Finnish). Our exercises are based on this book. There are also useful English materials in the following links: 
-https://www.r-graph-gallery.com/ggplot2-package.html
-http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+If you want to go a bit further into the topic of visualization, you can read chapter 8. in the Tilastotieteen käsikirja (p. 147-172, in Finnish). Our exercises are based on this book. There are also useful English materials in the following links: <https://www.r-graph-gallery.com/ggplot2-package.html> <http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html>
 
 ## Viewing plots
 
@@ -123,7 +132,7 @@ http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
 
 **If you use basic R.scripts** your plots will appear on the lower right window in RStudio (Plots tab). It's important that this Plots tab area is large enough. If you try to plot and your RStudio is squeezed from the right side so that the Plots tab window is very small, it may give an error. Also note that changing the window size after plotting is possible and the image will transform to the new dimensions. If you want to look at your image separately and especially if you want to look at it bigger, click the Zoom button in the Plots tab. This will open a separate window that you can also move around and change its size by dragging from the sides/corners (the image will transform automatically to the new dimensions).
 
-```{r dev = "png"}
+```{r dev = "png", fig.width= 10}
 
 # Let's plot some basic bar and pie charts. We'll use the insuliini (insulin) dataset from the nummenmaa-package
 
@@ -155,84 +164,58 @@ pie(table(insuliini$SOKERITASAP),
 
 ```
 
-The bar and pie plots above were generated with basic plotting functions from the package named graphics. This is one of the default packages R contains, therefore these functions are always at hand in R.
+The bar and pie plots above were generated with basic plotting functions from the graphics-package. This is one of the default packages R contains, therefore these functions are always available in R. Some users still prefer using these old visualization functions, but their syntax isn't as "tidy" as tidyverse-based ggplot2 functions, which we will look into next.
 
-Next we will look into the plotting functions from the tidyverse-package ggplot2. This works a bit differently and it will be more complex compared to the very simplistic codes used with the basic plotting functions. However, ggplot2 is much more versatile and can create a wide variety of very informative plots that are also beautiful at the same time. This is often required for publishing, so that's why we also want you to learn the basics of ggplot2.
+So, ggplot2 works a bit differently and it has its own syntax that can feel a bit overwhelming in the beginning. However, ggplot2 is much more versatile and can create a wide variety of very informative plots that are also beautiful at the same time. This is often required for publishing, so that's why we also want you to learn the basics of ggplot2.
 
-You can learn more about ggplot2 here https://ggplot2-book.org/index.html. This is a free online book about ggplot2. It's very extensive but look especially into this chapter https://ggplot2-book.org/mastery.html, which helps you to understand the "grammar" of ggplot2. When you handle the grammar, using ggplot2 is easy.
+You can learn more about ggplot2 here <https://ggplot2-book.org/index.html>. This is a free online book about ggplot2. It's very extensive but look especially into this chapter <https://ggplot2-book.org/mastery.html>, which helps you to understand the "grammar" of ggplot2. When you handle that, using ggplot2 becomes easy.
 
 **HINT:** You can assign your plots into objects. This way it's saved into your environment and you can replot it any time just by calling the object name. This will also be utilized in the following exercises where we want to plot more than one plot at a time.
 
-**There are two ways to plot with ggplot2:**
+**ggplot()** is the complete plotting function from the ggplot2-package. With ggplot you can control every little detail in your visualizations, but it requires other functions too to create the plot. The key concept you need to learn here is that this visualization tool uses layers. Each layer is added separately and can control different features in the plot. Layers are added by using + between the plotting tasks (functions). Plotting starts with the ggplot-function and it's followed by other functions, usually a geom as a second task and then other functions, which control the colors, titles, text sizes, and orientation etc.
 
-1. qplot() which is quick and simple but lacks some finesses the second option has.
-2. ggplot() which is the complete plotting function. It's more complex than qplot() but with this function you can control every little detail in your images.
+So in its simplest form it could be something like:
 
-We will go through examples for both functions.
+ggplot(data, aes(x, y)) +\
+geom_bar(stat="count") +\
+labs(title = "main title of your plot", x = "x-axis title", y = "y-axis title")
 
-## qplot()
-
+Sure, we could even leave the labs() out, but good plots always have clear labels so I don't want to leave it out from the example.
 
 ```{r dev = "png"}
 
-# First qplot()
+# On the first row we determine that we are using the dataset suhteet (relationships) and the variable PARISUHDE (intimate relationship). 
+# geom_bar on the second row determines that we want a bar plot with counts, and that the bars should be filled based on the variable PARISUHDE.
+# NOTE: the aes function controls the aesthetics and can be used either from within the ggplot or geom_, or even on its own. See this discussion for examples: https://stackoverflow.com/questions/71299586/whats-the-difference-between-placing-the-aes-function-inside-the-ggplot-fun.  
 
-# On the first row we determine that we are using the dataset suhteet (relationships) and the variable PARISUHDE (intimate relationship). geom="bar" determines that we want a bar plot.
-# On the second row we determine the headings and the fill=PARISUHDE determines that the color filling is done based on this variable.
-# The theme_light() determines that we are using a light theme. The scale_fill_brewer is used to determine the coloring. There are loads of different scale_fills, just type scale_fill, press tab and have a look, but make sure that the palette is suitable for your data type (e.g. continuous vs. categorical).
-# The last line determines the angle for the x-axis labels, angle defines the angle of the text and hjust controls horizontal justification of the text in relation to the plot. Without it the texts will overlap (you can try how it will look). legen.position = "none" will remove the legend which would be redundant in this visualization.
+# The theme_light() determines that we are using a light theme. 
+# The scale_fill_brewer is used to determine the coloring. There are many different scale_fills, just type scale_fill, press tab and have a look, but make sure that the palette is suitable for your data type (e.g. continuous vs. categorical).
 
-plot1 <- qplot(data=suhteet, PARISUHDE, geom="bar", 
-            xlab="Parisuhde", ylab="Lukumäärä", fill=PARISUHDE) + 
-  theme_light() + scale_fill_brewer(palette = "Accent") + 
-  theme(axis.text.x=element_text(angle=45, hjust=1),
-        legend.position = "none") 
+# The last line determines the angle for the x-axis labels, angle defines the angle of the text and hjust controls horizontal justification of the text in relation to the plot. Without it the texts will overlap (you can try how it will look). legend.position = "none" will remove the legend which would be redundant in this visualization.
 
-# The next plot follows the same logic with some small changes.
+plot1 <- ggplot(data=suhteet, aes(x = PARISUHDE)) +
+  geom_bar(stat="count", aes(fill = PARISUHDE)) +
+  labs(x="Parisuhde", y="Lukumäärä") + 
+  theme_light() + 
+  scale_fill_brewer(palette="Accent") + 
+  theme(axis.text.x=element_text(angle=45, hjust=1), legend.position="none") 
 
-plot2 <- qplot(data=suhteet, PARISUHDE, geom="bar", 
-            xlab="Parisuhde", ylab="Lukumäärä", fill=SUKUP) + 
-  theme_light() + scale_fill_viridis_d(begin = 0.2, end = 0.8) +
-  theme(axis.text.x=element_text(angle=45, hjust=1))  
+# The next plot follows the same logic with some small changes. The fill within labs changes the legend label from the original SUKUP to more readable Sukupuoli.
 
-grid.arrange(plot1, plot2, ncol=2) # This function comes from the package gridExtra. It does something similar that the par() did in the example above, but this need to be used after creating/assigning the images and then the plot names are called here. ncol=2 determines the number of columns. The plots won't appear before this function is used!
+plot2 <- ggplot(data=suhteet, aes(x = PARISUHDE)) + 
+  geom_bar(stat="count", aes(fill = SUKUP)) +
+  labs(x="Parisuhde", y="Lukumäärä", fill = "Sukupuoli") +
+  theme_light() + 
+  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+
+
+grid.arrange(plot1, plot2, ncol=2) # This function comes from the package gridExtra. It does something similar that the par() did in the base R example above, but this needs to be used after creating/assigning the images and then the plot names are called here. ncol=2 determines the number of columns. The plots won't appear before this function is used!
 
 
 ```
 
 **NOTE** It's important in which order you specify the different plotting options in ggplot(). This is because they will **add layers one by one** and specific layers will cover others. You can demonstrate this to yourself by switching the order of the last two code rows in the previous code chunk (the theme codes before grid.arrange and remember to keep the + at its place).
-
-
-```{r dev = "png"}
-# Dot plot and violin plot
-
-# Here we use the dataset suhteet and plot the variable PARISUHDE against the variable SEKS_AKTIIVISUUS (sexual activity), geom= "dotplot" determines that we want a dot plot.
-
-# On the second row are the settings for data points. stackdir determines in which direction to stack the dots. binaxis is the axis to bin along (here y; binning refers to how the dots are grouped together in the plot)
-
-plot3 <- qplot(data=suhteet, PARISUHDE, SEKS_AKTIIVISUUS, geom="dotplot", 
-            stackdir = "center", binaxis = "y", binwidth=0.075, 
-            xlab="Parisuhteen tyyppi", ylab="Seksuaalinen aktiivisuus") + # Set the headings for x and y axes
-  theme_light() # Use the light theme
-
-# The same as above but now we want a violin plot so geom="violin", fill colors based on the grouping PARISUHDE.
-
-# Notice that on the third row I changed the scale fill determinant and how it changed the colors.
-
-plot4 <- qplot(data=suhteet, PARISUHDE, SEKS_AKTIIVISUUS, geom="violin", fill=PARISUHDE, 
-            xlab="Parisuhteen tyyppi", ylab="Seksuaalinen aktiivisuus") + 
-  theme_light() + scale_fill_discrete() + 
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-
-grid.arrange(plot3, plot4, ncol=2)
-
-#Basically these two depict the same thing but depending on the person, others prefer dot plots over violin plots and vice versa.
-
-```
-
-## ggplot()
-
-Let's look into the ggplot(). This will be a bit different from the qplot(). Pay attention to how the different parameters are determined differently here.
 
 ```{r dev = "png"}
 
@@ -240,7 +223,7 @@ Let's look into the ggplot(). This will be a bit different from the qplot(). Pay
 
 # On row two we determine which plot type we want. In this case it's the bar plot and therefore we use the function geom_bar(). stat= "summary defines which statistical transformation we want to use on the data. fun = mean determines that we want to calculate the mean from the variable y (BMI) at each x (Heikentynyt, normaali, T2DM). fill determines the colors to be used for filling the bars.
 
-plot5 <- ggplot(insuliini, aes(y=BMI, x=factor(SOKERITASAP, level=c("Normaali", "Heikentynyt", "T2DM")))) + 
+plot3 <- ggplot(insuliini, aes(y=BMI, x=factor(SOKERITASAP, level=c("Normaali", "Heikentynyt", "T2DM")))) + 
   geom_bar(stat="summary", fun = mean, fill=c("lightgreen","yellow","orange")) + 
   labs(title="BMI ryhmittäin", # Add main title
        x="Sokeritasapaino", y = "BMI") + # Add x and y axis labels
@@ -250,19 +233,59 @@ plot5 <- ggplot(insuliini, aes(y=BMI, x=factor(SOKERITASAP, level=c("Normaali", 
 
 # On the second row we determine that we want to calculate the mean for variable y (BMI) separately for both sexes at each x. We also define position="dodge" which determines that the individual bars from both sexes are placed next to each other and not stacked on top of each other. You can see what happens if you remove this command.
 
-plot6 <- ggplot(insuliini, aes(y=BMI, x=factor(SOKERITASAP, level=c("Normaali", "Heikentynyt", "T2DM")), fill=SUKUP)) + 
+plot4 <- ggplot(insuliini, aes(y=BMI, x=factor(SOKERITASAP, level=c("Normaali", "Heikentynyt", "T2DM")), fill=SUKUP)) + 
   geom_bar(stat="summary", fun = mean, position="dodge") + 
   labs(title="BMI ryhmittäin", 
        x="Sokeritasapaino", y = "BMI") + 
   theme_minimal() + scale_fill_brewer(palette = "Dark2") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 
-grid.arrange(plot5, plot6, ncol=2)
+grid.arrange(plot3, plot4, ncol=2)
 
 
 ```
+**Violin and dot plots** (tree plot)
 
-```{r dev = "png"}
+Violin and dotplots are quite typical visualizations in biology. Here we will use the iris and ChickWeight data, which can be found within R.
+
+```{r, fig.width=10, fig.height=5}
+#I assign the data into objects so that they can be viewed easily.
+iris <- iris
+chick_w <- ChickWeight
+
+dplot <- ggplot(iris, aes(y = Sepal.Length, x = Species)) +
+  geom_dotplot(binaxis = "y", stackdir = "center", aes(fill = Species), dotsize = 0.7, binpositions="all", binwidth = 1/10) + #binwidth controls how the dots are spread and binpositions="all" ensures that the bins are aligned between groups.
+  theme(legend.position="none")
+
+vlnplot <- ggplot(iris, aes(y = Sepal.Length, x = Species)) +
+  geom_violin(aes(fill = Species)) +
+  theme(legend.position="none")
+
+library(patchwork)
+dplot + vlnplot
+#NOTE: here I'm using another way to aggregate plots. This is enabled by the patchwork-package (comes from tidyverse). This is a super neat way to combine multiple plots into a big visualization. See more here: https://patchwork.data-imaginist.com
+
+```
+```{r}
+dplot2 <- ggplot(chick_w, aes(y = weight, x = Diet)) +
+  geom_dotplot(binaxis = "y", stackdir = "center", aes(fill = Diet), dotsize = 1, binpositions="all", binwidth = 12/1) +
+  theme(legend.position="none")
+
+vlnplot2 <- ggplot(chick_w, aes(y = weight, x = Diet)) +
+  geom_violin(aes(fill = Diet)) +
+  theme(legend.position="none")
+
+dplot2 / vlnplot2
+```
+
+
+
+
+
+
+
+
+```{r dev = "png", fig.height=10, fig.width=10}
 # Finally, let's look at some scatter plots that are very common plots in biosciences.
 
 # On the second row we determine the opacity of the data points with alpha=0.50 and the size of the points in the plot. Try and change these to see how it affects your plot.
@@ -300,7 +323,7 @@ grid.arrange(plot7, plot8, ncol=1)
 
 There are a multitude of color palettes available to R users. The basic palette that's always available is already big (657 colors to be exact), but you can find all sorts of nice palettes by googling "r color palettes".
 
-```{r dev = "png"}
+```{r dev = "png", fig.height=7, fig.width=12}
 
 #The code in this chunk is not something you need to learn. It's just one way you can quickly check some colors and their names. When referring to these colors, use the names the way are written here, e.g. aquamarine2.
 
@@ -323,10 +346,9 @@ showCols <- function(cl=colors(), bg = "grey", #This defines the function that's
               vp=vp, gp=gpar(cex = cex, col = cm))
 }
 
-showCols(bg="gray20",cl=colors()[1:64], rot=30, cex=0.9) #This checks and prints the first 64 colors in the basic R palette.
+showCols(bg="gray20",cl=colors()[1:64], rot=0, cex=0.9) #This checks and prints the first 64 colors in the basic R palette.
 
 ```
-
 
 ## Saving plots
 
