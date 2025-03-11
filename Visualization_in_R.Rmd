@@ -6,7 +6,7 @@ knit: (function(input_file, encoding) {
       encoding=encoding,
       output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Lea Mikkola"
-date: "2/29/2024"
+date: "11/03/2025"
 output:
   html_document:
     df_print: paged
