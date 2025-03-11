@@ -14,7 +14,7 @@ output:
     keep_md: yes
 ---
 
-This document is part of an obligatory R course at the University of Turku (BIOL3050 Bioinformatics to Biologists). The materials have been created by the teacher Dr. Lea Mikkola and they have been updated in February 2024. The teaching materials and data are partly based on the Finnish book "Statistics handbook" By Prof. Lauri Nummenmaa. EAN: 9789520401382.
+This document is part of an obligatory R course at the University of Turku (BIOL3050 Bioinformatics to Biologists). The materials have been created by the teacher Dr. Lea Mikkola. The teaching materials and data are partly based on the Finnish book "Statistics handbook" By Prof. Lauri Nummenmaa. EAN: 9789520401382.
 
 ### General remarks about piping and grouping
 
