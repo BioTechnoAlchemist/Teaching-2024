@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lea Mikkola" />
 
-<meta name="date" content="2025-11-03" />
+<meta name="date" content="2025-03-11" />
 
 <title>Visualization with R</title>
 
@@ -1623,17 +1623,16 @@ display: none;
 
 <h1 class="title toc-ignore">Visualization with R</h1>
 <h4 class="author">Lea Mikkola</h4>
-<h4 class="date">11/03/2025</h4>
+<h4 class="date">03/11/2025</h4>
 
 </div>
 
 
 <p>This document is part of an obligatory R course at the University of
 Turku (BIOL3050 Bioinformatics to Biologists). The materials have been
-created by the teacher Dr. Lea Mikkola and they have been updated in
-February 2024. The teaching materials and data are partly based on the
-Finnish book “Statistics handbook” By Prof. Lauri Nummenmaa. EAN:
-9789520401382.</p>
+created by the teacher Dr. Lea Mikkola. The teaching materials and data
+are partly based on the Finnish book “Statistics handbook” By
+Prof. Lauri Nummenmaa. EAN: 9789520401382.</p>
 <div id="general-remarks-about-piping-and-grouping" class="section level3">
 <h3>General remarks about piping and grouping</h3>
 <p><strong>Piping</strong> can be used to create efficient workflows
@@ -1682,15 +1681,19 @@ ciri %&gt;%
             LDL.kh = sd(LDL))
 
 # ka refers to keskiarvo meaning average and kh to keskihajonta meaning standard deviation. </code></pre>
-<pre class="r"><code># We can also do this another way by using the function summarise_all(). Then you need to define the statistical functions (mean, median, sd etc.) within another function called list(). This function has been updated recently and although it still works, the summarise _if, _at, and _all verbs have been superceded by across and pick. Below you&#39;ll see the same tasks done with the old summarise_all and across.
+<pre class="r"><code># We can also do this another way by using the function summarise_all(). Then you need to define the statistical functions (mean, median, sd etc.) within another function called list(). 
+# (Update 2025) This function has been updated recently and although it still works, the summarise _if, _at, and _all verbs have been superceded by across and pick. Below you&#39;ll see similar tasks done with the old summarise_all and across.
 
 ciri %&gt;%
   group_by(SUKUP) %&gt;%
   select(SUKUP, CERAD, KOLESTEROLI, HDL, LDL, KOULUTUSV, IKA, BMI) %&gt;% 
-  summarise_all(list(mean = mean, median = median))
-
-
-# Note that the summarise functions are quite specific in what kind of data it can input, because it tries to calculate these statistics across all variables and for some variables it&#39;s not possible (because they are not numeric). Here I went around this issue by selecting only the columns from which it can calculate these statistics. This applies to the next example with across as well.
+  summarise_all(list(mean = mean, median = median))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SUKUP"],"name":[1],"type":["fct"],"align":["left"]},{"label":["CERAD_mean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["KOLESTEROLI_mean"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["HDL_mean"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["LDL_mean"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KOULUTUSV_mean"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["IKA_mean"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["BMI_mean"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["CERAD_median"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["KOLESTEROLI_median"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["HDL_median"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["LDL_median"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["KOULUTUSV_median"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["IKA_median"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["BMI_median"],"name":[15],"type":["dbl"],"align":["right"]}],"data":[{"1":"Mies","2":"84.53846","3":"5.923077","4":"1.270385","5":"3.800385","6":"12.16923","7":"71.03846","8":"28.84615","9":"87","10":"5.85","11":"1.23","12":"3.60","13":"10.45","14":"71","15":"27.5"},{"1":"Nainen","2":"87.02941","3":"6.352941","4":"1.429412","5":"4.272647","6":"11.42059","7":"70.76471","8":"26.41176","9":"91","10":"6.65","11":"1.39","12":"4.47","13":"10.50","14":"70","15":"27.0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Note that the summarise functions are quite specific in what kind of data it can input, because it tries to calculate these statistics across all variables and for some variables it&#39;s not possible (because they are not numeric). Here I went around this issue by selecting only the columns from which it can calculate these statistics. This applies to the next example with across as well.
 #In the list() function I use list(mean = mean, median = median) just for naming the new variables meaningfully. If I would just use list(mean, median) that would work too, but then the names of the new variables would be harder to interpret (they would look like variable_fn1 instead of variable_mean). You can try both options.</code></pre>
 <p>Using across..</p>
 <pre class="r"><code>ciri %&gt;%
